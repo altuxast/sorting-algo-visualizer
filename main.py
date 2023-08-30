@@ -7,7 +7,7 @@ class DrawInformation:
     BLACK = 0, 0, 0
     BLUE = 0, 0, 255
     CYAN = 0, 255, 255
-    GREEN = 0, 255, 0
+    GREEN = 0, 63, 0
     RED = 255, 0, 0
     WHITE = 255, 255, 255
     BACKGROUND_COLOR = CYAN
@@ -41,14 +41,17 @@ class DrawInformation:
         self.block_height = math.floor((self.height - self.TOP_PAD) / (self.max_val - self.min_val))
         self.start_x = self.SIDE_PAD // 2
 
-def draw(draw_info):
+def draw(draw_info, algo_name, ascending):
     draw_info.window.fill(draw_info.BACKGROUND_COLOR)
     
+    title = draw_info.LARGE_FONT.render(f"{algo_name} - {'Ascending' if ascending else 'Descending'}", 1, draw_info.GREEN)
+    draw_info.window.blit(title, (draw_info.width/2 - title.get_width()/2, 10))
+
     controls = draw_info.FONT.render("R - Reset | SPACE - Start Sorting | A - Ascending | D - Descending", 1, draw_info.BLACK)
-    draw_info.window.blit(controls, (draw_info.width/2 - controls.get_width()/2, 10))
+    draw_info.window.blit(controls, (draw_info.width/2 - controls.get_width()/2, 45))
 
     sorting = draw_info.FONT.render("B - Bubble Sort | I - Insertion Sort", 1, draw_info.BLACK)
-    draw_info.window.blit(sorting, (draw_info.width/2 - sorting.get_width()/2, 45))
+    draw_info.window.blit(sorting, (draw_info.width/2 - sorting.get_width()/2, 75))
 
     draw_list(draw_info)
     pygame.display.update()
@@ -125,7 +128,7 @@ def main():
             except StopIteration:
                 sorting = False
         else:
-            draw(draw_info)
+            draw(draw_info, sorting_algo_name, ascending)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -135,9 +138,9 @@ def main():
                 continue
 
             if event.key == pygame.K_r:
-                    lst = generate_starting_list(n, min_val, max_val)
-                    draw_info.set_list(lst)
-                    sorting = False
+                lst = generate_starting_list(n, min_val, max_val)
+                draw_info.set_list(lst)
+                sorting = False
             elif event.key == pygame.K_SPACE and sorting == False:
                 sorting = True
                 sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
