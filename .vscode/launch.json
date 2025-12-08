@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Sorting Visualizer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/sorting-algo-visualizer/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {},
+            "cwd": "${workspaceFolder}",
+            "python": "${workspaceFolder}/venv/Scripts/python.exe"
+        }
+    ]
+}
