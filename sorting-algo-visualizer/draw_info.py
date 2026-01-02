@@ -4,6 +4,8 @@ import math
 pygame.init()
 
 class DrawInformation:
+    TITLE_HEIGHT = 50
+    RIBBON_HEIGHT = 100
     BLACK = 0, 0, 0
     BLUE = 0, 0, 255
     CYAN = 0, 255, 255
@@ -22,7 +24,7 @@ class DrawInformation:
     LARGE_FONT = pygame.font.SysFont("courier new", 21)
 
     SIDE_PAD = 100
-    TOP_PAD = 150
+    TOP_PAD = TITLE_HEIGHT + RIBBON_HEIGHT
 
     def __init__(self, width, height, lst):
         self.width = width

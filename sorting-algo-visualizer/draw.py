@@ -1,19 +1,76 @@
 import pygame
-from draw_info import DrawInformation
 
-def draw(draw_info, algo_name, ascending):
+from ui.helpers import draw_title, is_hovered
+from ui.ribbon import draw_ribbon
+from ui.controls import draw_dropdown, draw_checkbox
+# from draw_list import draw_list
+
+# def draw(draw_info, algo_name, ascending):
+def draw(draw_info, ui_state, mouse_pos=None):
     draw_info.window.fill(draw_info.BACKGROUND_COLOR)
+
+    draw_title(draw_info)
     
-    title = draw_info.LARGE_FONT.render(f"{algo_name} - {'Ascending' if ascending else 'Descending'}", 1, draw_info.GREEN)
-    draw_info.window.blit(title, (draw_info.width/2 - title.get_width()/2, 10))
+    draw_ribbon(draw_info)
+    
+    # Algorithms
+    draw_dropdown(
+        draw_info,
+        x=20,
+        y=draw_info.TITLE_HEIGHT + 30,
+        width=160,
+        height=30,
+        text=ui_state["algo_left"],
+        hovered=ui_state["button_hovered"]["algo_left"],
+        clicked=ui_state["button_clicked"]["algo_left"]
+    )
 
-    controls = draw_info.FONT.render("R - Reset | SPACE - Start Sorting | A - Ascending | D - Descending", 1, draw_info.BLACK)
-    draw_info.window.blit(controls, (draw_info.width/2 - controls.get_width()/2, 45))
+    draw_dropdown(
+        draw_info,
+        x=200,
+        y=draw_info.TITLE_HEIGHT + 30,
+        width=160,
+        height=30,
+        text=ui_state["algo_right"],
+        hovered=ui_state["button_hovered"]["algo_right"],
+        clicked=ui_state["button_clicked"]["algo_right"]
+    )
 
-    sorting = draw_info.FONT.render("B - Bubble Sort | I - Insertion Sort", 1, draw_info.BLACK)
-    draw_info.window.blit(sorting, (draw_info.width/2 - sorting.get_width()/2, 75))
+    draw_dropdown(
+        draw_info,
+        x=20,
+        y=draw_info.TITLE_HEIGHT + 80,
+        width=100,
+        height=30,
+        text="Start",
+        hovered=ui_state["button_hovered"]["start"],
+        clicked=ui_state["button_clicked"]["start"]
+    )
+
+    draw_dropdown(
+        draw_info,
+        x=140,
+        y=draw_info.TITLE_HEIGHT + 80,
+        width=100,
+        height=30,
+        text="Reset",
+        hovered=ui_state["button_hovered"]["reset"],
+        clicked=ui_state["button_clicked"]["reset"]
+    )
+
+
+    # Heat Map
+    draw_checkbox(
+        draw_info,
+        x=400,
+        y=draw_info.TITLE_HEIGHT + 35,
+        label="Heat Map",
+        checked=ui_state["heat_map"],
+        hovered=ui_state["button_hovered"]["heat_map"]
+    )
 
     draw_list(draw_info)
+    
     pygame.display.update()
 
 def draw_list(draw_info, color_positions={}, clear_bg=False):
