@@ -1,6 +1,8 @@
 import pygame
 
 def draw_dropdown(draw_info, x, y, width, height, text, hovered=False, clicked=False):
+    rect = pygame.Rect(x, y, width, height)
+    
     if clicked:
         color_bg = (255, 0, 0)
     elif hovered:
@@ -8,12 +10,13 @@ def draw_dropdown(draw_info, x, y, width, height, text, hovered=False, clicked=F
     else:
         color_bg = draw_info.WHITE
 
-    pygame.draw.rect(draw_info.window, color_bg, (x, y, width, height))
-    pygame.draw.rect(draw_info.window, draw_info.BLACK, (x, y, width, height), 2)
+    pygame.draw.rect(draw_info.window, color_bg, rect)
+    pygame.draw.rect(draw_info.window, draw_info.BLACK, rect, 2)
 
     label = draw_info.FONT.render(text, True, draw_info.BLACK)
     draw_info.window.blit(label, (x + 10, y + 8))
-
+    
+    return rect
 
 def draw_checkbox(draw_info, x, y, label, checked, hovered=False):
     box_size = 20

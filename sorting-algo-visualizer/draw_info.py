@@ -5,7 +5,7 @@ pygame.init()
 
 class DrawInformation:
     TITLE_HEIGHT = 50
-    RIBBON_HEIGHT = 100
+    RIBBON_HEIGHT = 120
     BLACK = 0, 0, 0
     BLUE = 0, 0, 255
     CYAN = 0, 255, 255
@@ -42,3 +42,6 @@ class DrawInformation:
         self.block_width = round((self.width - self.SIDE_PAD) / len(lst))
         self.block_height = math.floor((self.height - self.TOP_PAD) / (self.max_val - self.min_val))
         self.start_x = self.SIDE_PAD // 2
+
+        # Activity tracking for heat map
+        self.activity = [0] * len(lst)
