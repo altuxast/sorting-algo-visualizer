@@ -48,6 +48,16 @@ def main():
             "pause": False,
             "ascending": False,
             "descending": False
+        },
+        "tooltips": {
+            "algo_left": "Select Bubble Sort (B)",
+            "algo_right": "Select Insertion Sort (I)",
+            "start": "Start sorting (Space)",
+            "reset": "Reset list (R)",
+            "pause": "Pause / Resume (P)",
+            "heat_map": "Toggle heat map",
+            "ascending": "Sort ascending (A)",
+            "descending": "Sort descending (D)"            
         }
     }
     
@@ -67,7 +77,7 @@ def main():
         # -------------------------
         ui_state["button_hovered"]["algo_left"] = is_hovered(mouse_pos, 20, draw_info.TITLE_HEIGHT + 30, 160, 30)
         ui_state["button_hovered"]["algo_right"] = is_hovered(mouse_pos, 200, draw_info.TITLE_HEIGHT + 30, 160, 30)
-        ui_state["button_hovered"]["heat_map"] = is_hovered(mouse_pos, 400, draw_info.TITLE_HEIGHT + 35, 20, 20)
+        ui_state["button_hovered"]["heat_map"] = is_hovered(mouse_pos, 380, draw_info.TITLE_HEIGHT + 30, 20, 20)
         ui_state["button_hovered"]["start"] = is_hovered(mouse_pos, 20, draw_info.TITLE_HEIGHT + 80, 100, 30)
         ui_state["button_hovered"]["reset"] = is_hovered(mouse_pos, 140, draw_info.TITLE_HEIGHT + 80, 100, 30)
         ui_state["button_hovered"]["pause"] = is_hovered(mouse_pos, 260, draw_info.TITLE_HEIGHT + 80, 100, 30)

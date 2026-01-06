@@ -2,7 +2,7 @@ import pygame
 
 from ui.helpers import draw_title, is_hovered
 from ui.ribbon import draw_ribbon
-from ui.controls import draw_dropdown, draw_checkbox
+from ui.controls import draw_dropdown, draw_checkbox, draw_tooltip
 # from draw_list import draw_list
 
 # def draw(draw_info, algo_name, ascending):
@@ -103,6 +103,18 @@ def draw(draw_info, ui_state, mouse_pos=None):
 
     draw_list(draw_info)
     
+    # Tooltips
+    if mouse_pos is not None:
+        hovered_key = None
+        for key, hovered in ui_state["button_hovered"].items():
+            if hovered:
+                hovered_key = key
+                break
+        if hovered_key:
+            text = ui_state.get("tooltips", {}).get(hovered_key)
+            if text:
+                draw_tooltip(draw_info, text, mouse_pos)
+                
     pygame.display.update()
     return ascending_button_rect, descending_button_rect
 

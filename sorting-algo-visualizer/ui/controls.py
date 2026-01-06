@@ -33,3 +33,20 @@ def draw_checkbox(draw_info, x, y, label, checked, hovered=False):
     text = draw_info.FONT.render(label, True, draw_info.BLACK)
     draw_info.window.blit(text, (x + box_size + 5, y))
 
+def draw_tooltip(draw_info, text, mouse_pos):
+    font = draw_info.FONT
+    padding = 6
+    
+    label = font.render(text, True, draw_info.BLACK)
+    w, h = label.get_size();
+    
+    x, y = mouse_pos
+    x += 12
+    y += 12
+    
+    bg_rect = pygame.Rect(x, y, w + padding * 2, h + padding * 2)
+    
+    pygame.draw.rect(draw_info.window, (255, 255, 210), bg_rect)
+    pygame.draw.rect(draw_info.window, draw_info.BLACK, bg_rect, 1)
+    
+    draw_info.window.blit(label, (x + padding, y + padding))
