@@ -1,4 +1,4 @@
-from draw import draw_list
+from utils_draw import draw_list
 from draw_info import DrawInformation
 
 
@@ -118,9 +118,8 @@ def merge_sort(draw_info, ascending=True):
         k = start
 
         while i < len(left) and j < len(right):
-            # Mark comparison
             draw_info.activity[k] += 1
-
+        
             if (left[i] <= right[j] and ascending) or (
                 left[i] >= right[j] and not ascending
             ):
@@ -129,9 +128,10 @@ def merge_sort(draw_info, ascending=True):
             else:
                 lst[k] = right[j]
                 j += 1
-
-            # Highlight write
+        
             draw_list(draw_info, {k: draw_info.RED}, True)
+            yield True          # ← you were missing this
+            k += 1              # ← and this
 
         # Remaining left
         while i < len(left):

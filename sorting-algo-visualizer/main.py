@@ -7,6 +7,7 @@ from utils import generate_starting_list
 from ui.helpers import is_hovered
 from sorting_registry import ALGORITHM_LIST, ALGORITHMS
 
+
 def main():
     pygame.init()
     run = True
@@ -63,17 +64,17 @@ def main():
 
     ascending_button_rect = None
     descending_button_rect = None
+    algorithm_item_rects = []
 
-    def handle_algorithm_dropdown_click(ui_state, mouse_pos, draw_info):
-        if not ui_state["button_clicked"]["algorithm"]:
-            return None  # dropdown is closed
+    def handle_algorithm_dropdown_click(ui_state, mouse_pos, mouse_pressed, draw_info):
+        # Only react if dropdown is open AND left mouse button is pressed
+        if not ui_state["button_clicked"]["algorithm"] or not mouse_pressed[0]:
+            return None
 
         x = 20
         y = draw_info.TITLE_HEIGHT + 20
         width = 200
         height = 30
-
-        # Each item appears below the main dropdown
 
         for index, name in enumerate(ALGORITHM_LIST):
             item_rect = pygame.Rect(x, y + (index + 1) * height, width, height)
@@ -94,31 +95,44 @@ def main():
         # ---------------------
         #  Update hover states
         # ---------------------
-        ui_state["button_hovered"]["algorithm"] = is_hovered(
-            mouse_pos, 20, draw_info.TITLE_HEIGHT + 30, 200, 30
-        )
-        ui_state["button_hovered"]["heat_map"] = is_hovered(
-            mouse_pos, 380, draw_info.TITLE_HEIGHT + 30, 20, 20
-        )
-        ui_state["button_hovered"]["start"] = is_hovered(
-            mouse_pos, 20, draw_info.TITLE_HEIGHT + 80, 100, 30
-        )
-        ui_state["button_hovered"]["reset"] = is_hovered(
-            mouse_pos, 140, draw_info.TITLE_HEIGHT + 80, 100, 30
-        )
-        ui_state["button_hovered"]["pause"] = is_hovered(
-            mouse_pos, 260, draw_info.TITLE_HEIGHT + 80, 100, 30
-        )
-        ui_state["button_hovered"]["ascending"] = is_hovered(
-            mouse_pos, 380, draw_info.TITLE_HEIGHT + 70, 120, 30
-        )
-        ui_state["button_hovered"]["descending"] = is_hovered(
-            mouse_pos, 520, draw_info.TITLE_HEIGHT + 70, 120, 30
-        )
-        
+        hover_main = is_hovered(mouse_pos, 20, draw_info.TITLE_HEIGHT + 20, 200, 30)
+        hover_items = any(rect.collidepoint(mouse_pos) for rect in algorithm_item_rects)
+
+        ui_state["button_hovered"]["algorithm"] = hover_main or hover_items
+
+        dropdown_open = ui_state["button_clicked"]["algorithm"]
+
+        if not dropdown_open:
+            ui_state["button_hovered"]["heat_map"] = is_hovered(
+                mouse_pos, 380, draw_info.TITLE_HEIGHT + 30, 20, 20
+            )
+            ui_state["button_hovered"]["start"] = is_hovered(
+                mouse_pos, 20, draw_info.TITLE_HEIGHT + 80, 100, 30
+            )
+            ui_state["button_hovered"]["reset"] = is_hovered(
+                mouse_pos, 140, draw_info.TITLE_HEIGHT + 80, 100, 30
+            )
+            ui_state["button_hovered"]["pause"] = is_hovered(
+                mouse_pos, 260, draw_info.TITLE_HEIGHT + 80, 100, 30
+            )
+            ui_state["button_hovered"]["ascending"] = is_hovered(
+                mouse_pos, 380, draw_info.TITLE_HEIGHT + 70, 120, 30
+            )
+            ui_state["button_hovered"]["descending"] = is_hovered(
+                mouse_pos, 520, draw_info.TITLE_HEIGHT + 70, 120, 30
+            )
+        else:
+            # Disable hover for all other buttons while dropdown is open
+            ui_state["button_hovered"]["heat_map"] = False
+            ui_state["button_hovered"]["start"] = False
+            ui_state["button_hovered"]["reset"] = False
+            ui_state["button_hovered"]["pause"] = False
+            ui_state["button_hovered"]["ascending"] = False
+            ui_state["button_hovered"]["descending"] = False
+
         # Hover detection for dropdown items
         ui_state["algorithm_hover_index"] = None
-        
+
         if ui_state["button_clicked"]["algorithm"]:
             for i, name in enumerate(ALGORITHM_LIST):
                 item_y = draw_info.TITLE_HEIGHT + 20 + (i + 1) * 30
@@ -126,7 +140,7 @@ def main():
                     ui_state["algorithm_hover_index"] = i
                     break
 
-        selected = handle_algorithm_dropdown_click(ui_state, mouse_pos, draw_info)
+        selected = handle_algorithm_dropdown_click(ui_state, mouse_pos, mouse_pressed, draw_info)
 
         if selected:
             ui_state["algorithm"] = selected
@@ -149,7 +163,7 @@ def main():
         # Start / Reset actions
         if mouse_pressed[0] and ui_state["button_hovered"]["start"]:
             ui_state["button_clicked"]["start"] = True
-            ascending_button_rect, descending_button_rect = draw(
+            ascending_button_rect, descending_button_rect, algorithm_item_rects = draw(
                 draw_info, ui_state, mouse_pos
             )
             pygame.display.update()
@@ -175,7 +189,7 @@ def main():
             except StopIteration:
                 sorting = False
         else:
-            ascending_button_rect, descending_button_rect = draw(
+            ascending_button_rect, descending_button_rect, algorithm_item_rects = draw(
                 draw_info, ui_state, mouse_pos
             )
 
@@ -249,10 +263,14 @@ def main():
                     ui_state["paused"] = not ui_state["paused"]
 
                 # Algorithm dropdown
-                if ui_state["button_hovered"]["algorithm"]:
-                    ui_state["button_clicked"]["algorithm"] = not ui_state[
-                        "button_clicked"
-                    ]["algorithm"]
+                if hover_main:
+                    # Clicking the main button toggles the dropdown
+                    ui_state["button_clicked"]["algorithm"] = not ui_state["button_clicked"]["algorithm"]
+
+                elif hover_items:
+                    # Clicking an item should NOT toggle the dropdown here
+                    # The selection logic handles closing it
+                    pass
 
                 # Heat map toggle
                 elif ui_state["button_hovered"]["heat_map"]:
