@@ -1,8 +1,23 @@
 import pygame
 
-def draw_dropdown(draw_info, x, y, width, height, text, hovered=False, clicked=False):
+
+def draw_dropdown(
+    draw_info,
+    x,
+    y,
+    width,
+    height,
+    text,
+    hovered=False,
+    clicked=False,
+    items=None,
+    hovered_index=None,
+):
+    window = draw_info.window
+
+    # --- Draw main dropdown box ---
     rect = pygame.Rect(x, y, width, height)
-    
+
     if clicked:
         color_bg = (255, 0, 0)
     elif hovered:
@@ -10,13 +25,38 @@ def draw_dropdown(draw_info, x, y, width, height, text, hovered=False, clicked=F
     else:
         color_bg = draw_info.WHITE
 
-    pygame.draw.rect(draw_info.window, color_bg, rect)
-    pygame.draw.rect(draw_info.window, draw_info.BLACK, rect, 2)
+    pygame.draw.rect(window, color_bg, rect)
+    pygame.draw.rect(window, draw_info.BLACK, rect, 2)
 
     label = draw_info.FONT.render(text, True, draw_info.BLACK)
-    draw_info.window.blit(label, (x + 10, y + 8))
-    
-    return rect
+    window.blit(label, (x + 10, y + 8))
+
+    # --- If not expanded, stop here ---
+    if not clicked or items is None:
+        return rect, []
+
+    # --- Draw expanded list ---
+    item_rects = []
+
+    for i, item in enumerate(items):
+        item_y = y + (i + 1) * height
+        item_rect = pygame.Rect(x, item_y, width, height)
+        item_rects.append(item_rect)
+
+        # Highlight hovered item
+        if hovered_index == i:
+            bg = (180, 180, 255)
+        else:
+            bg = draw_info.WHITE
+
+        pygame.draw.rect(window, bg, item_rect)
+        pygame.draw.rect(window, draw_info.BLACK, item_rect, 1)
+
+        item_label = draw_info.FONT.render(item, True, draw_info.BLACK)
+        window.blit(item_label, (x + 10, item_y + 8))
+
+    return rect, item_rects
+
 
 def draw_checkbox(draw_info, x, y, label, checked, hovered=False):
     box_size = 20
@@ -27,26 +67,31 @@ def draw_checkbox(draw_info, x, y, label, checked, hovered=False):
     pygame.draw.rect(draw_info.window, draw_info.BLACK, (x, y, box_size, box_size), 2)
 
     if checked:
-        pygame.draw.line(draw_info.window, draw_info.GREEN, (x, y), (x + box_size, y + box_size), 3)
-        pygame.draw.line(draw_info.window, draw_info.GREEN, (x + box_size, y), (x, y + box_size), 3)
+        pygame.draw.line(
+            draw_info.window, draw_info.GREEN, (x, y), (x + box_size, y + box_size), 3
+        )
+        pygame.draw.line(
+            draw_info.window, draw_info.GREEN, (x + box_size, y), (x, y + box_size), 3
+        )
 
     text = draw_info.FONT.render(label, True, draw_info.BLACK)
     draw_info.window.blit(text, (x + box_size + 5, y))
 
+
 def draw_tooltip(draw_info, text, mouse_pos):
     font = draw_info.FONT
     padding = 6
-    
+
     label = font.render(text, True, draw_info.BLACK)
-    w, h = label.get_size();
-    
+    w, h = label.get_size()
+
     x, y = mouse_pos
     x += 12
     y += 12
-    
+
     bg_rect = pygame.Rect(x, y, w + padding * 2, h + padding * 2)
-    
+
     pygame.draw.rect(draw_info.window, (255, 255, 210), bg_rect)
     pygame.draw.rect(draw_info.window, draw_info.BLACK, bg_rect, 1)
-    
+
     draw_info.window.blit(label, (x + padding, y + padding))
